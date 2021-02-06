@@ -19,11 +19,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil.setContentView
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.R
-import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.data.SocketPacket
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.databinding.ActivityMainBinding
-import com.google.gson.Gson
-import java.net.Socket
-import java.util.concurrent.Executors
 
 /**
  * This app allows a user to receive location updates in the background.
@@ -54,23 +50,6 @@ class MainActivity : AppCompatActivity(), PermissionRequestFragment.Callbacks,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        Executors.newSingleThreadExecutor().execute {
-            val socket = Socket("10.0.2.2", 3000)
-
-
-            val send = SocketPacket(
-                user = "user",
-                key = "key"
-            )
-
-            val json = Gson().toJson(send)
-
-            socket.outputStream.write(json.encodeToByteArray())
-            socket.outputStream.write("\n".encodeToByteArray())
-            socket.outputStream.flush()
-
-        }
 
         setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 

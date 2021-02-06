@@ -7,7 +7,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SocketPacket {
-    String description;
-    String user;
-    String key;
+    String operation; // "LOGIN" , "REGISTER"
+    String username;
+    String password;
+    String token;
+    String error; // Error
+    String success; // Success
 }
