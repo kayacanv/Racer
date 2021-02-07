@@ -1,7 +1,6 @@
 package com.racer.RacerServer;
 
 import com.google.gson.Gson;
-import com.racer.Constants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -18,25 +17,35 @@ public class ServerThread extends Thread {
 
     public void run() {
         try {
-            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+            log.info( "Socket connected: " + socket.getInetAddress());
 
+            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             new PrintWriter(this.socket.getOutputStream(), true);
 
             String inputLine;
+            SocketPacket response = null;
             while((inputLine = in.readLine()) != null) {
                 SocketPacket packet = (new Gson()).fromJson(inputLine, SocketPacket.class);
 
+                log.info("Packet: {}", packet);
+
                 switch (packet.operation) {
                     case Constants.O_REGISTER:
-                        clientService.register(packet);
+                        response = clientService.register(packet);
                         break;
                     case Constants.O_LOGIN:
-                        clientService.login(packet);
+                        response = clientService.login(packet);
                         break;
                 }
+                log.info("Response: {}", response);
+                socket.getOutputStream().write(new Gson().toJson(response).getBytes());
+                socket.getOutputStream().write("\n".getBytes());
+                socket.getOutputStream().flush();
             }
 
+            socket.close();
+            log.info("Socket Clossed");
 
 
             /* do {
@@ -47,8 +56,6 @@ public class ServerThread extends Thread {
             } while (!text.equals("bye"));
             */
 
-            socket.close();
-            log.info("Socket Clossed");
 
         } catch (IOException ex) {
             System.out.println("Server exception: " + ex.getMessage());

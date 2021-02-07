@@ -70,7 +70,7 @@ public class DatabaseService {
             return "ERROR: username should not contain any spaces";
         if(username.contains(" "))
             return "ERROR: username should not contain any spaces";
-        if(userData.containsKey(username))
+        if(!userData.containsKey(username))
             return "ERROR: username already taken";
 
         if(!userData.get(username).equals(password))

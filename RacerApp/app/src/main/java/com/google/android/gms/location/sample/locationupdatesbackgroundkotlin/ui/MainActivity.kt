@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil.setContentView
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.R
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.databinding.ActivityMainBinding
+import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.ui.ui.login.LoginFragment
 
 /**
  * This app allows a user to receive location updates in the background.
@@ -44,7 +45,6 @@ import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.da
  * Best practices require you to spread out your first fine/course request and your background
  * request.
  */
-@ExperimentalStdlibApi
 class MainActivity : AppCompatActivity(), PermissionRequestFragment.Callbacks,
     LocationUpdateFragment.Callbacks {
 
@@ -57,11 +57,12 @@ class MainActivity : AppCompatActivity(), PermissionRequestFragment.Callbacks,
 
         if (currentFragment == null) {
 
-            val fragment = LocationUpdateFragment.newInstance()
+//            val fragment = LocationUpdateFragment.newInstance()
 
             supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragment_container,  LoginFragment())
+                .addToBackStack(null)
                 .commit()
         }
     }

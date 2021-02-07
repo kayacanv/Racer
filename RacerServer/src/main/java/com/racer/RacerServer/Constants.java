@@ -1,4 +1,4 @@
-package com.racer;
+package com.racer.RacerServer;
 
 public interface Constants {
     int PORT = 3000;
