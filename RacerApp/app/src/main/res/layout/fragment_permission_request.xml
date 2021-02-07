@@ -24,6 +24,7 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/gradient"
         tools:context=".ui.PermissionRequestFragment">
 
         <ImageView
@@ -85,6 +86,7 @@
             android:layout_marginRight="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_normal"
             android:text="@string/enable_fine_location_button_text"
+            android:background="@drawable/button_shape"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

@@ -26,11 +26,11 @@
     <string name="settings">Settings</string>
     <string name="ok">OK</string>
 
-    <string name="fine_location_access_rationale_title_text">Welcome to the Background Location Sample!</string>
+    <string name="fine_location_access_rationale_title_text">Welcome to the RACER!</string>
 
-    <string name="fine_location_access_rationale_details_text">This sample allows you to receive location updates while using the app.
+    <string name="fine_location_access_rationale_details_text">  Racer app allows you to record your running.
         \n\n
-        In order for this feature to work, please approve access to your location via the button below.
+        In order to record your location, please approve access to your location via the button below.
     </string>
 
     <string name="background_location_access_rationale_title_text">Improve location accuracy!</string>

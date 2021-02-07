@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/runBottom"
+        android:title="Run"
+        android:contentDescription="Run Status"
+        />
+
+    <item
+        android:id="@+id/leaderboardBottom"
+        android:title="Leaderboard"
+        android:contentDescription="Shows Leaderboard"
+        />
+
+</menu>
