@@ -37,7 +37,7 @@ public class ClientService {
 
         String response = databaseService.findUserPassword(username, password);
 
-        String token = "token";
+        String token = "token"; // TODO
 
         if(response!=null) {
             return SocketPacket.builder()
@@ -49,6 +49,23 @@ public class ClientService {
                 .username(username)
                 .password(password)
                 .token(token)
+                .build();
+    }
+
+
+
+    public SocketPacket distanceTaken(SocketPacket packet) {
+        String response = databaseService.findUserPassword(packet.username, packet.password);
+        if(response!=null) {
+            return SocketPacket.builder()
+                    .error(response)
+                    .build();
+        }
+
+        databaseService.update(packet.username, packet.distTaken);
+
+        return SocketPacket.builder()
+                .success("true")
                 .build();
     }
 }

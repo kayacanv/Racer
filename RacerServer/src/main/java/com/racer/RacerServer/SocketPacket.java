@@ -2,6 +2,8 @@ package com.racer.RacerServer;
 
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -13,4 +15,6 @@ public class SocketPacket {
     String token;
     String error; // Error
     String success; // Success
+    Double distTaken;
+    List <UserDistance> leaderboard;
 }

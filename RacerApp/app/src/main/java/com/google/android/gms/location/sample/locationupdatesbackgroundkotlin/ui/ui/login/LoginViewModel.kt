@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
+import com.example.bupazar.User
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.*
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.data.SocketPacket
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.ui.LocationUpdateFragment
@@ -55,6 +56,8 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
             val result = loginRepository.login(username, password)
 
             if (packet?.username !=null){
+                    User.username = username
+                    User.password = password
                 _loginResult.postValue(LoginResult(success = LoggedInUserView(displayName = packet.username!!)))
             } else {
                 _loginResult.postValue(LoginResult(error = R.string.login_failed))

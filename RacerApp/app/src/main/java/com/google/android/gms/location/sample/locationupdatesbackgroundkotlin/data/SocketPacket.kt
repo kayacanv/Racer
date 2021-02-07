@@ -7,7 +7,10 @@ data class SocketPacket(
     val password: String? = null,
     val token: String? = null,
     val error: String? = null,
-    val success: String? = null
+    val success: String? = null,
+    val distTaken: Double? = null,
+    val leaderboard: List<UserDistance>? = null
+
 )
 
 

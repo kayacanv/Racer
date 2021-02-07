@@ -20,7 +20,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.data.SocketPacket
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import java.net.Socket
 
 /**
  * Helper functions to simplify permission checks/requests.
@@ -56,3 +59,34 @@ fun Fragment.requestPermissionWithRationale(
         requestPermissions(arrayOf(permission), requestCode)
     }
 }
+
+
+fun sendPacket(packet: SocketPacket) {
+    val socket = Socket(IP_ADDRESS, PORT)
+
+    val json = Gson().toJson(packet)
+    socket.outputStream.write(json.toByteArray())
+    socket.outputStream.write("\n".toByteArray())
+    socket.outputStream.flush()
+    socket.close()
+}
+
+
+
+fun sendPacket(socket : Socket ,packet: SocketPacket) {
+
+    val json = Gson().toJson(packet)
+    socket.outputStream.write(json.toByteArray())
+    socket.outputStream.write("\n".toByteArray())
+    socket.outputStream.flush()
+    socket.close()
+}
+
+
+
+
+
+
+
+
+

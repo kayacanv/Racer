@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
@@ -15,68 +16,124 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Service
 @RequiredArgsConstructor
 public class DatabaseService {
-    private static final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
-    Map<String, String> userData = new HashMap<String, String>();
 
+    private static final ReentrantReadWriteLock userPassLock = new ReentrantReadWriteLock(true);
+    private static final ReentrantReadWriteLock userDistLock = new ReentrantReadWriteLock(true);
+
+
+    Map<DatabaseType, Map<String,String> > data = new HashMap<>();
+
+
+    private void writeLockIt(DatabaseType databaseType) {
+        switch (databaseType) {
+            case USER_DIST:
+                userPassLock.writeLock().lock();
+            case USER_PASS:
+                userDistLock.writeLock().lock();
+        }
+    }
+    private void readLockIt(DatabaseType databaseType) {
+        switch (databaseType) {
+            case USER_DIST:
+                userPassLock.readLock().lock();
+            case USER_PASS:
+                userDistLock.readLock().lock();
+        }
+    }
+    private void writeUnlockIt(DatabaseType databaseType) {
+        switch (databaseType) {
+            case USER_DIST:
+                userPassLock.writeLock().unlock();
+            case USER_PASS:
+                userDistLock.writeLock().unlock();
+        }
+    }
+    private void readUnlockIt(DatabaseType databaseType) {
+        switch (databaseType) {
+            case USER_DIST:
+                userPassLock.readLock().unlock();
+            case USER_PASS:
+                userDistLock.readLock().unlock();
+        }
+    }
 
     @SneakyThrows
-    private void saveFile() {
-        lock.writeLock().lock();
-
+    private void saveFile(DatabaseType databaseType) {
+        writeLockIt(databaseType);
         Properties properties = new Properties();
 
-        for (Map.Entry<String, String> entry : userData.entrySet()) {
+        for (Map.Entry<String, String> entry : data.get(databaseType).entrySet()) {
             properties.put(entry.getKey(), entry.getValue());
         }
 
-        properties.store(new FileOutputStream("User.data"), null);
+        properties.store(new FileOutputStream(databaseType.toString() + ".data"), null);
 
-        lock.writeLock().unlock();
+        writeUnlockIt(databaseType);
     }
 
     @SneakyThrows
-    private void loadFile() {
-        lock.readLock().lock();
+    private void loadFile(DatabaseType databaseType) {
 
-        userData.clear();
+        readLockIt(databaseType);
+
+        data.put(databaseType, new HashMap<String, String>());
+
         Properties properties = new Properties();
-        properties.load(new FileInputStream("User.data"));
+        properties.load(new FileInputStream(databaseType.toString() + ".data"));
 
         for (String key : properties.stringPropertyNames()) {
-            userData.put(key, properties.get(key).toString());
+            data.get(databaseType).put(key, properties.get(key).toString());
         }
-        lock.readLock().unlock();
+        readUnlockIt(databaseType);
     }
 
     public String addUser(final String username, final String password) {
-        loadFile();
+        loadFile(DatabaseType.USER_PASS);
 
         if(StringUtils.isEmpty(username))
             return "ERROR: username should not contain any spaces";
         if(username.contains(" "))
             return "ERROR: username should not contain any spaces";
-        if(userData.containsKey(username))
+        if(data.get(DatabaseType.USER_PASS).containsKey(username))
             return "ERROR: username already taken";
 
-        userData.put(username, password);
-        saveFile();
+        data.get(DatabaseType.USER_PASS).put(username, password);
+        saveFile(DatabaseType.USER_PASS);
         return null;
     }
 
     public String findUserPassword(final String username, final String password) {
-        loadFile();
+        loadFile(DatabaseType.USER_PASS);
 
         if(StringUtils.isEmpty(username))
             return "ERROR: username should not contain any spaces";
         if(username.contains(" "))
             return "ERROR: username should not contain any spaces";
-        if(!userData.containsKey(username))
+        if(!data.get(DatabaseType.USER_PASS).containsKey(username))
             return "ERROR: username already taken";
 
-        if(!userData.get(username).equals(password))
+        if(!data.get(DatabaseType.USER_PASS).get(username).equals(password))
             return "ERROR: password is wrong";
 
         return null;
+    }
+
+    public void update(String username, Double distTaken) {
+        DatabaseType type = DatabaseType.USER_DIST;
+        loadFile(type);
+        double current = 0;
+        if(data.get(type).get(username) != null)
+            current = Double.parseDouble(data.get(type).get(username));
+        current += distTaken;
+        data.get(type).put(username, Double.toString(current));
+        saveFile(type);
+    }
+
+
+    public Map<String, String> mapData(DatabaseType userDist) {
+        DatabaseType type = DatabaseType.USER_DIST;
+        loadFile(type);
+        return data.get(type);
     }
 }
 

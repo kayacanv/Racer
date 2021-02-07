@@ -11,6 +11,8 @@ import java.net.*;
 public class ServerThread extends Thread {
     private Socket socket;
     ClientService clientService = new ClientService();
+    LeaderboardService leaderboardService = new LeaderboardService();
+
     public ServerThread(Socket socket) {
         this.socket = socket;
     }
@@ -37,6 +39,12 @@ public class ServerThread extends Thread {
                     case Constants.O_LOGIN:
                         response = clientService.login(packet);
                         break;
+                    case Constants.O_DISTANCE_UPDATE:
+                        response = clientService.distanceTaken(packet);
+                        break;
+                    case Constants.O_GET_LEADERBOARD:
+                        leaderboardService.getLeaderboard(socket);
+
                 }
                 log.info("Response: {}", response);
                 socket.getOutputStream().write(new Gson().toJson(response).getBytes());
