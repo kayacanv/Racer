@@ -18,9 +18,13 @@ package com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.u
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil.setContentView
+import androidx.fragment.app.Fragment
+import com.example.bupazar.User
+import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.PersonFragment
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.R
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.databinding.ActivityMainBinding
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.ui.ui.login.LoginFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 /**
  * This app allows a user to receive location updates in the background.
@@ -53,19 +57,57 @@ class MainActivity : AppCompatActivity(), PermissionRequestFragment.Callbacks,
 
         setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
+        val locationUpdateFragment = LocationUpdateFragment.newInstance()
+        val personFragment = PersonFragment()
+        val loginFragment = LoginFragment()
+
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
 
         if (currentFragment == null) {
-
-//            val fragment = LocationUpdateFragment.newInstance()
-
-            supportFragmentManager
+            if(User.username==null) {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, loginFragment)
+                    .addToBackStack(null)
+                    .commit()
+            } else {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, locationUpdateFragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+        bottom_navigation.setOnNavigationItemSelectedListener {
+            if (User.username == null && it.itemId==R.id.runBottom) {
+                supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.fragment_container,  LoginFragment())
+                .replace(R.id.fragment_container, loginFragment)
                 .addToBackStack(null)
                 .commit()
+            }
+            else if (it.itemId==R.id.runBottom) {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, locationUpdateFragment)
+                    .addToBackStack(null)
+                    .commit()
+            } else {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, personFragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+            false
         }
     }
+
+    private fun makeCurrentFragment(fragment: Fragment) =
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment_container, fragment)
+            commit()
+        }
 
     // Triggered from the permission Fragment that it's the app has permissions to display the
     // location fragment.

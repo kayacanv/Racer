@@ -33,7 +33,7 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDUDx0U4ryBD_qyG0hVY1s8l9v7GBgWCWg"/>
+            android:value=""/>
 
         <activity android:name=".ui.MainActivity">
             <intent-filter>
