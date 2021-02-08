@@ -5,55 +5,55 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Service
 @RequiredArgsConstructor
 public class DatabaseService {
 
-    private static final ReentrantReadWriteLock userPassLock = new ReentrantReadWriteLock(true);
-    private static final ReentrantReadWriteLock userDistLock = new ReentrantReadWriteLock(true);
+    private static final MyLock userPassLock = new MyLock();
+    private static final MyLock userDistLock = new MyLock();
 
 
     Map<DatabaseType, Map<String,String> > data = new HashMap<>();
 
 
+    @SneakyThrows
     private void writeLockIt(DatabaseType databaseType) {
         switch (databaseType) {
             case USER_DIST:
-                userPassLock.writeLock().lock();
+                userPassLock.lock();
             case USER_PASS:
-                userDistLock.writeLock().lock();
+                userDistLock.lock();
         }
     }
+    @SneakyThrows
     private void readLockIt(DatabaseType databaseType) {
         switch (databaseType) {
             case USER_DIST:
-                userPassLock.readLock().lock();
+                userPassLock.lock();
             case USER_PASS:
-                userDistLock.readLock().lock();
+                userDistLock.lock();
         }
     }
     private void writeUnlockIt(DatabaseType databaseType) {
         switch (databaseType) {
             case USER_DIST:
-                userPassLock.writeLock().unlock();
+                userPassLock.unlock();
             case USER_PASS:
-                userDistLock.writeLock().unlock();
+                userDistLock.unlock();
         }
     }
     private void readUnlockIt(DatabaseType databaseType) {
         switch (databaseType) {
             case USER_DIST:
-                userPassLock.readLock().unlock();
+                userPassLock.unlock();
             case USER_PASS:
-                userDistLock.readLock().unlock();
+                userDistLock.unlock();
         }
     }
 

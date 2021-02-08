@@ -194,6 +194,7 @@ class LocationUpdateFragment : Fragment() {
     }
 
     private fun calcSpeed(locations: List<MyLocationEntity>): Double {
+        if(locations.size<10) return floor(calcAllDist(locations)*60*60/calcTotalTime(locations));
         var newLoc = locations.subList(0,10);
         return floor(calcAllDist(newLoc)*60*60/calcTotalTime(newLoc))
     }

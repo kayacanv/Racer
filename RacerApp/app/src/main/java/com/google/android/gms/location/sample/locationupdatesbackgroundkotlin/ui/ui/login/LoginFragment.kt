@@ -15,8 +15,20 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.bupazar.User
+import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.IP_ADDRESS
+import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.O_REGISTER
+import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.PORT
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.R
+import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.data.SocketPacket
 import com.google.android.gms.location.sample.locationupdatesbackgroundkotlin.ui.LocationUpdateFragment
+import com.google.gson.Gson
+import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_login.view.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.Socket
+import java.util.concurrent.Executors
 
 
 class LoginFragment : Fragment() {
@@ -41,6 +53,24 @@ class LoginFragment : Fragment() {
         val loginButton = view.findViewById<Button>(R.id.login)
         val loadingProgressBar = view.findViewById<ProgressBar>(R.id.loading)
 
+        view.register.setOnClickListener {
+            Executors.newSingleThreadExecutor().execute {
+
+                val socket = Socket(IP_ADDRESS, PORT)
+
+                val send = SocketPacket(
+                    operation = O_REGISTER,
+                    username = username.text.toString(),
+                    password = password.text.toString()
+                )
+
+                val json = Gson().toJson(send)
+                socket.outputStream.write(json.toByteArray())
+                socket.outputStream.write("\n".toByteArray())
+                socket.outputStream.flush()
+                socket.close()
+            }
+        }
         loginViewModel.loginFormState.observe(this,
             Observer { loginFormState ->
                 if (loginFormState == null) {

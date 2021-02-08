@@ -68,7 +68,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="64dp"
         android:background="@drawable/button_shape"
-        android:enabled="false"
+        android:enabled="true"
         android:text="Register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
