@@ -22,10 +22,12 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/gradient"
         tools:context=".ui.LocationUpdateFragment">
 
 
         <Button
+            android:background="@drawable/button_shape"
             android:id="@+id/startOrStopLocationUpdatesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,9 +42,11 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
+            android:background="@drawable/button_shape"
             android:id="@+id/enableBackgroundLocationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
             android:layout_marginTop="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
@@ -52,12 +56,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="10dp"
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/enableBackgroundLocationButton">
+            <View
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/background_dark"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -78,7 +88,7 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 app:layout_constraintVertical_bias="0.0"
                 android:textSize="20sp"
-                tools:text="Total Distance" />
+                android:text="Total Distance" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -95,7 +105,7 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 app:layout_constraintVertical_bias="0.0"
                 android:textSize="20sp"
-                tools:text="Total Time: " />
+                android:text="Total Time: " />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
@@ -110,7 +120,7 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 app:layout_constraintVertical_bias="0.0"
                 android:textSize="20sp"
-                tools:text="Speed: " />
+                android:text="Speed: " />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
@@ -125,7 +135,7 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 app:layout_constraintVertical_bias="0.0"
                 android:textSize="20sp"
-                tools:text="Average Pace: " />
+                android:text="Average Pace: " />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -139,7 +149,7 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 app:layout_constraintVertical_bias="0.0"
                 android:textSize="20sp"
-                tools:text="Distance" />
+                android:text="Distance" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -153,7 +163,7 @@
                 android:layout_marginBottom="@dimen/margin_normal"
                 app:layout_constraintVertical_bias="0.0"
                 android:textSize="20sp"
-                tools:text="Time" />
+                android:text="Time" />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
@@ -166,6 +176,7 @@
                 android:background="@android:color/background_dark"/>
 
             <LinearLayout
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"

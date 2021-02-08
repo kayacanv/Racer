@@ -50,7 +50,7 @@ private const val TAG = "LocationUpdateFragment"
  */
 class LocationUpdateFragment : Fragment() {
 
-    private var activityListener: PermissionRequestFragment.Callbacks? = null
+    private var activityListener: Callbacks? = null
 
     var rosterMapView: MapView? = null
 
@@ -63,7 +63,7 @@ class LocationUpdateFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        if (context is PermissionRequestFragment.Callbacks) {
+        if (context is Callbacks) {
             activityListener = context
 
             // If fine location permission isn't approved, instructs the parent Activity to replace
@@ -161,10 +161,14 @@ class LocationUpdateFragment : Fragment() {
 
         binding.speedText.text = "$speed km/h"
 
-        val totSec : Int = floor(1/speed*60*60).roundToInt()
-        val paceSec = totSec%60
-        val paceMin = totSec/60
-        binding.avgPaceText.text = "$paceMin:$paceSec"
+        if(speed>1) {
+            val totSec: Int = floor(1 / speed * 60 * 60).roundToInt()
+            val paceSec = totSec % 60
+            val paceMin = totSec / 60
+            binding.avgPaceText.text = "$paceMin:$paceSec"
+        }
+        else
+            binding.avgPaceText.text = "--:--"
         var curDist = calcAllDist(getActiveList(locations))
         val curTime = calcTotalTime(getActiveList(locations))
         val curSec = (curTime/1000)%60

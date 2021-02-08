@@ -21,4 +21,5 @@
     <color name="borderColor">#3B0071</color>
     <color name="colorButton">#3B0071</color>
     <color name="secondary_blue">#B4372E</color>
+    <color name="lightBlue">#8AD8FC</color>
 </resources>

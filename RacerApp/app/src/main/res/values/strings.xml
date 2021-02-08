@@ -49,7 +49,7 @@
     <string name="start_receiving_location">Start Running</string>
     <string name="stop_receiving_location">Stop Running</string>
 
-    <string name="enhance_with_background_location_button_text">Enhance with Background Location</string>
+    <string name="enhance_with_background_location_button_text">Enable Background Location</string>
 
     <!-- NEW ones -->
     <string name="request_updates">Request updates</string>
