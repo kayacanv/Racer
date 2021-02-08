@@ -39,6 +39,7 @@ import java.net.Socket
 import java.net.SocketException
 import java.util.concurrent.Executors
 import kotlin.math.floor
+import kotlin.math.roundToInt
 
 private const val TAG = "LocationUpdateFragment"
 
@@ -49,7 +50,7 @@ private const val TAG = "LocationUpdateFragment"
  */
 class LocationUpdateFragment : Fragment() {
 
-    private var activityListener: Callbacks? = null
+    private var activityListener: PermissionRequestFragment.Callbacks? = null
 
     var rosterMapView: MapView? = null
 
@@ -62,7 +63,7 @@ class LocationUpdateFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        if (context is Callbacks) {
+        if (context is PermissionRequestFragment.Callbacks) {
             activityListener = context
 
             // If fine location permission isn't approved, instructs the parent Activity to replace
@@ -87,57 +88,10 @@ class LocationUpdateFragment : Fragment() {
             activityListener?.requestBackgroundLocationPermission()
         }
 
-        listenLeaderboardSocket()
-
         return binding.root
     }
 
-    private fun listenLeaderboardSocket() {
-        Executors.newSingleThreadExecutor().execute {
 
-        while(true){
-            try {
-                val socket = Socket(IP_ADDRESS, PORT)
-
-                val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
-
-                val json = Gson().toJson(SocketPacket(operation = O_GET_LEADERBOARD))
-                socket.outputStream.write(json.toByteArray())
-                socket.outputStream.write("\n".toByteArray())
-                socket.outputStream.flush()
-
-
-                var inputLine: String
-
-                while (reader.readLine().also { inputLine = it } != null) {
-                    val packet = Gson().fromJson(
-                            inputLine,
-                            SocketPacket::class.java
-                    )
-
-                    if (packet?.leaderboard == null)
-                        break
-
-                    val outputStringBuilder = StringBuilder("")
-
-                    for (userDistance in packet.leaderboard!!) {
-                        outputStringBuilder.append(userDistance.username + " : " + (floor(userDistance.distance!!) / 1000) + " km\n")
-                    }
-                    Log.i("Leaderboard", outputStringBuilder.toString())
-                    binding.leaderboardTextView.text = outputStringBuilder.toString()
-                }
-                socket.close()
-            } catch (e: SocketException) {
-                Log.e("SOCKET EXCEPTION", e.printStackTrace().toString())
-                Thread.sleep(10000);
-                continue;
-            }
-        }
-
-
-
-        }
-    }
 
     private fun calcDist(a : MyLocationEntity, b : MyLocationEntity) : Double{
         val locationA = Location("point A")
@@ -177,6 +131,18 @@ class LocationUpdateFragment : Fragment() {
         return (locations[0].date.time - locations.last().date.time)
     }
 
+    private fun getActiveList(locations: List<MyLocationEntity>) : List<MyLocationEntity> {
+        if(locations.size<1)
+            return locations
+        var ind = 0
+        while(ind+1 < locations.size) {
+
+            if(locations[ind].date.time - locations[ind+1].date.time > 10000)
+                return locations.subList(0,ind+1)
+            ind++;
+        }
+        return locations
+    }
     private fun onLocationChangeLocationList(locations: List<MyLocationEntity>) {
         var dist = calcAllDist(locations)
         val last = calcLastDist(locations)
@@ -186,14 +152,30 @@ class LocationUpdateFragment : Fragment() {
         val speed = calcSpeed(locations)
 
         if(dist<1000)
-            binding.allTimeTotalDistance.text = "All Time Total Distance: $dist Meters"
+            binding.totalDistText.text = "$dist Meters"
         else {
-            dist = dist/1000
-            binding.allTimeTotalDistance.text = "All Time Total Distance: $dist Kilometers"
+            dist /= 1000
+            binding.totalDistText.text = "$dist Kilometers"
         }
-        binding.totalTimeText.text = "Total Time:\n Minute: $minutes\n Seconds: $seconds\n"
+        binding.totalTimeText.text = "$minutes : $seconds"
 
-        binding.currentSpeedText.text = "Current Speed: $speed km/h"
+        binding.speedText.text = "$speed km/h"
+
+        val totSec : Int = floor(1/speed*60*60).roundToInt()
+        val paceSec = totSec%60
+        val paceMin = totSec/60
+        binding.avgPaceText.text = "$paceMin:$paceSec"
+        var curDist = calcAllDist(getActiveList(locations))
+        val curTime = calcTotalTime(getActiveList(locations))
+        val curSec = (curTime/1000)%60
+        val curMin =  curTime/60000
+        binding.timeText.text = "$curMin : $curSec"
+        if(curDist<1000)
+            binding.distText.text = "$curDist Meters"
+        else {
+            curDist /= 1000
+            binding.distText.text = "$curDist Kilometers"
+        }
 
         Executors.newSingleThreadExecutor().execute {
             sendPacket(SocketPacket(
@@ -229,19 +211,9 @@ class LocationUpdateFragment : Fragment() {
                         Log.d(TAG, "Got ${locations.size} locations")
 
                         if (locations.isEmpty()) {
-                            binding.locationOutputTextView.text =
-                                    getString(R.string.emptyLocationDatabaseMessage)
+
                         } else {
-
                             onLocationChangeLocationList(locations)
-
-
-                            val outputStringBuilder = StringBuilder("")
-                            for (location in locations) {
-                                outputStringBuilder.append(location.toString() + "\n")
-                            }
-
-                            binding.locationOutputTextView.text = outputStringBuilder.toString()
                         }
                     }
                 }
@@ -303,6 +275,7 @@ class LocationUpdateFragment : Fragment() {
             }
         }
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

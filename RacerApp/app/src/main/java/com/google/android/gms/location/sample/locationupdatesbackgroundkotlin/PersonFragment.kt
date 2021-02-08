@@ -81,11 +81,11 @@ class PersonFragment : Fragment() {
                         if (packet?.leaderboard == null)
                             break
 
-                        var ITEMS: MutableList<DummyContent.DummyItem> = ArrayList()
+                        var items: MutableList<DummyContent.DummyItem> = ArrayList()
                         for (userDistance in packet.leaderboard!!) {
-                            ITEMS.add(
+                            items.add(
                                 DummyContent.createDummyItem(
-                                    ITEMS.size + 1,
+                                    items.size + 1,
                                     userDistance.username!!,
                                     (floor(
                                         userDistance.distance!!
@@ -94,9 +94,9 @@ class PersonFragment : Fragment() {
                             )
                         }
                         mainThread.post( Runnable () {
-                            view.list.adapter = MyPersonRecyclerViewAdapter(ITEMS)
+                            view.list.adapter = MyPersonRecyclerViewAdapter(items)
                         });
-                        Log.i("Leaderboard Updated: ", ITEMS.toString())
+                        Log.i("Get Leaderboard: ", items.toString())
 
                     }
                     socket.close()
